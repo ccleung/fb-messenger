@@ -1,6 +1,6 @@
 # Overview
 
-This gem uses the [facebook (fb) messenger API](https://developers.facebook.com/docs/messenger-platform/send-api-reference) to send and receive facebook messages. Note that you will need to configure a [webhook URL](https://developers.facebook.com/docs/messenger-platform/webhook-reference) in your web app to which facebook messages will be posted. Please go through the [getting started guide](https://developers.facebook.com/docs/messenger-platform/quickstart) for setting up facebook messenger API, which is a pre-requisite step for using this gem.
+This gem uses the [Facebook Messenger API](https://developers.facebook.com/docs/messenger-platform/send-api-reference) to send and receive facebook messages. Note that you will need to configure a [webhook URL](https://developers.facebook.com/docs/messenger-platform/webhook-reference) in your web app to which facebook messages will be posted. Please go through the [getting started guide](https://developers.facebook.com/docs/messenger-platform/quickstart) for setting up Facebook Messenger API, which is a pre-requisite step for using this gem.
 
 # Usage
 
