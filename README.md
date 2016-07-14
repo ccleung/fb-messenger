@@ -29,7 +29,7 @@ The following steps uses a rails setup, but the gem can be used in any ruby web 
    
    Where the classes `MsgSubscriber`, `PostBackSubscriber`, and `DeliverSubscriber` (arbitary class names) implements a `call` method seen in [Fb::Messenger::Subscriber::Base](https://github.com/ccleung/fb-messenger/blob/master/lib/fb/messenger/subscribers/base.rb)
    
-   Usually in the `call` method, you would use the `Fb::Messenger::Client` to create reply message back to the sender.
+   Usually in the `call` method, you would use the [Fb::Messenger::Client](https://github.com/ccleung/fb-messenger/blob/master/README.md#sending-messages) to create reply message back to the sender.
 
 3. In `routes.rb` specify two endpoints, one for verifying the webhook and one for handling webhook POST requests, e.g.,
    ```ruby
@@ -63,6 +63,7 @@ Send [Generic Template Messages](https://developers.facebook.com/docs/messenger-
 
 ```ruby
 item = Fb::Messenger::Template::GenericItem.new
+# assign values to each attribute
 item.title = 'title'
 item.subtitle = '...'
 item.image_url = '...'
@@ -88,7 +89,30 @@ Fb::Messenger::Client.send_message_template(id, template_msg)
 Send [Receipt Template Messages](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template):
 
 ```ruby
-Fb::Messenger::Client.send_message_text(id, "your message here")
+item = Fb::Messenger::Template::ReceiptItem.new
+item.title = 'title'
+item.subtitle = '...'
+item.quantity = '...'
+item.price = '...'
+item.currency = '...'
+item.image_url = '...'
+
+receipt = Fb::Messenger::Template::Receipt.new
+
+# Please see https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template for example values
+receipt.recipient_name = '...'
+receipt.order_number = '...'
+receipt.currency = '...'
+# payment_method cannot be nil
+receipt.payment_method = '...'
+receipt.order_url = '...'
+receipt.timestamp = '...'
+receipt.total_cost = '...'
+# can add multiple items
+receipt.receipt_items << item
+
+template_msg = receipt.template
+Fb::Messenger::Client.send_message_template(id, template_msg)
 ```
 
 
