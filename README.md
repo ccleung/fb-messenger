@@ -1,39 +1,59 @@
-# Fb::Messenger
+# Overview
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/fb/messenger`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem uses the [facebook (fb) messenger API](https://developers.facebook.com/docs/messenger-platform/send-api-reference) to send and receive facebook messages. Note that you will need to configure a [webhook URL](https://developers.facebook.com/docs/messenger-platform/webhook-reference) in your web app to which facebook messages will be posted. Please go through the [getting started guide](https://developers.facebook.com/docs/messenger-platform/quickstart) for setting up facebook messenger API, which is a pre-requisite step for using this gem.
 
-TODO: Delete this and the text above, and describe your gem
+# Usage
 
-## Installation
+The following steps uses a rails setup, but the gem can be used in any ruby web framework that is capable of creating an API endpoint for the configured webhook.
 
-Add this line to your application's Gemfile:
+1. Add the following to an initializer `config/initializers/<name>.rb` to setup your [fb access token](https://developers.facebook.com/docs/messenger-platform/quickstart) and [fb verify token](https://developers.facebook.com/docs/messenger-platform/quickstart)
+   ```ruby
+   require 'fb/messenger'
+   
+   Fb::Messenger.configure do |config|
+     config.access_token = 'FB_MESSENGER_ACCESS_TOKEN'
+     config.verify_token = 'FB_MESSENGER_VERIFY_TOKEN'
+   end
+   ```
+
+2. Ensure that you have subscribers for each of the messenger [webhook events](https://developers.facebook.com/docs/messenger-platform/webhook-reference), namely 'message', 'postback', and 'deliver', e.g., add the following to the same `config/initializers/<name>.rb` file:
+   ```ruby
+   Fb::Messenger::Receiver.configure do |receiver|
+     receiver.subscribe 'message', MsgSubscriber.new
+     receiver.subscribe 'postback', PostBackSubscriber.new
+     receiver.subscribe 'delivery', DeliverySubscriber.new
+   end
+   ```
+   
+   Where the classes `MsgSubscriber`, `PostBackSubscriber`, and `DeliverSubscriber` (arbitary class names) implements a `call` method seen in [Fb::Messenger::Subscriber::Base](https://github.com/ccleung/fb-messenger/blob/master/lib/fb/messenger/subscribers/base.rb)
+   
+   Usually in the `call` method, you would use the Fb::Messenger::Client to create reply message back to the sender.
+
+3. In `routes.rb` specify two endpoints, one for verifying the webhook and one for handling webhook POST requests, e.g.,
+   ```ruby
+   Rails.application.routes.draw do
+     get 'facebook/webhook' => 'facebook#verify'
+     post 'facebook/webhook' => 'facebook#webhook'
+   end
+   ```
+
+4. In the corresponding controller that implements the webhook add the following:
+   ```ruby
+   def webhook
+     Fb::Messenger::Receiver.receive(params[:entry])
+     head 200
+   end
+   ```
+   
+   Note that you need to return 2XX to indicate that you have received the message. To implement the `verify` controller action method for this example, please see the fb messenger [getting started guide](https://developers.facebook.com/docs/messenger-platform/quickstart).
+
+# Sending messages
+
+Text messages:
 
 ```ruby
-gem 'fb-messenger'
+Fb::Messenger::Client.send_message_text(sender_id, "your message here")
 ```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install fb-messenger
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/fb-messenger.
-
 
 ## License
 
