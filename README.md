@@ -4,6 +4,8 @@ This gem uses the [facebook (fb) messenger API](https://developers.facebook.com/
 
 # Usage
 
+## Receiving Messages
+
 The following steps uses a rails setup, but the gem can be used in any ruby web framework that is capable of creating an API endpoint for the configured webhook.
 
 1. Add the following to an initializer `config/initializers/<name>.rb` to setup your [fb access token](https://developers.facebook.com/docs/messenger-platform/quickstart) and [fb verify token](https://developers.facebook.com/docs/messenger-platform/quickstart)
@@ -47,9 +49,9 @@ The following steps uses a rails setup, but the gem can be used in any ruby web 
    
    Note that you need to return 2XX to indicate that you have received the message. To implement the `verify` controller action method for this example, please see the fb messenger [getting started guide](https://developers.facebook.com/docs/messenger-platform/quickstart).
 
-# Sending messages
+## Sending Messages
 
-In the following examples, `id` can represent different types of facebook id's, such as page id's or user id's (see: https://developers.facebook.com/docs/messenger-platform/send-api-reference)
+The `Fb::Messenger::Client` is used for sending fb messages. In the following examples, `id` can represent different types of facebook id's, such as page id's or user id's (see: https://developers.facebook.com/docs/messenger-platform/send-api-reference). Note that the `Fb::Messenger::Client` can be used in your subscriber `call` methods to reply back to messages.
 
 Send [Text Messages](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message):
 
