@@ -27,7 +27,7 @@ The following steps uses a rails setup, but the gem can be used in any ruby web 
    
    Where the classes `MsgSubscriber`, `PostBackSubscriber`, and `DeliverSubscriber` (arbitary class names) implements a `call` method seen in [Fb::Messenger::Subscriber::Base](https://github.com/ccleung/fb-messenger/blob/master/lib/fb/messenger/subscribers/base.rb)
    
-   Usually in the `call` method, you would use the Fb::Messenger::Client to create reply message back to the sender.
+   Usually in the `call` method, you would use the `Fb::Messenger::Client` to create reply message back to the sender.
 
 3. In `routes.rb` specify two endpoints, one for verifying the webhook and one for handling webhook POST requests, e.g.,
    ```ruby
@@ -49,11 +49,46 @@ The following steps uses a rails setup, but the gem can be used in any ruby web 
 
 # Sending messages
 
-Text messages:
+In the following examples, `id` can represent different types of facebook id's, such as page id's or user id's (see: https://developers.facebook.com/docs/messenger-platform/send-api-reference)
+
+Send [Text Messages](https://developers.facebook.com/docs/messenger-platform/send-api-reference/text-message):
 
 ```ruby
-Fb::Messenger::Client.send_message_text(sender_id, "your message here")
+Fb::Messenger::Client.send_message_text(id, "your message here")
 ```
+
+Send [Generic Template Messages](https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template):
+
+```ruby
+item = Fb::Messenger::Template::GenericItem.new
+item.title = 'title'
+item.subtitle = '...'
+item.image_url = '...'
+
+button = Fb::Messenger::Template::Button.new
+# see: https://developers.facebook.com/docs/messenger-platform/send-api-reference/button-template
+button.type = 'postback'
+button.title = '...'
+# this can be a json string that your Subscriber for postback must handle
+button.payload = '...'
+
+# you can add multiple buttons
+item.buttons << button
+
+generic = Fb::Messenger::Template::Generic
+# you can add multiple generic items
+generic.generic_items << item
+
+template_msg = generic.template
+Fb::Messenger::Client.send_message_template(id, template_msg)
+```
+
+Send [Receipt Template Messages](https://developers.facebook.com/docs/messenger-platform/send-api-reference/receipt-template):
+
+```ruby
+Fb::Messenger::Client.send_message_text(id, "your message here")
+```
+
 
 ## License
 
