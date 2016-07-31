@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["ccleung"]
   spec.email         = ["clemsquared@gmail.com"]
 
-  spec.summary       = %q{Send and receive Fb messenger messages.}
-  spec.description   = %q{Send and receive Fb messenger messages.}
+  spec.summary       = %q{Send and receive Facebook messenger messages.}
+  spec.description   = %q{Send and receive Facebook messenger messages using the Facebook messenger API.}
   spec.homepage      = "https://github.com/ccleung/fb-messenger"
   spec.license       = "MIT"
 
